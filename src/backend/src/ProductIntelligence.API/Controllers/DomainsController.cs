@@ -1,0 +1,58 @@
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using ProductIntelligence.Application.Commands.Domains;
+
+namespace ProductIntelligence.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class DomainsController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    private readonly ILogger<DomainsController> _logger;
+
+    public DomainsController(IMediator mediator, ILogger<DomainsController> logger)
+    {
+        _mediator = mediator;
+        _logger = logger;
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(DomainDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<DomainDto>> CreateDomain(
+        [FromBody] CreateDomainCommand command,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return CreatedAtAction(nameof(GetDomain), new { id = result.Id }, result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(DomainDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<DomainDto>> GetDomain(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        // Placeholder - implement GetDomainQuery
+        return NotFound();
+    }
+
+    [HttpGet("organization/{organizationId:guid}")]
+    [ProducesResponseType(typeof(IEnumerable<DomainDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<DomainDto>>> GetDomainHierarchy(
+        [FromRoute] Guid organizationId,
+        CancellationToken cancellationToken)
+    {
+        // Placeholder - implement GetDomainHierarchyQuery
+        return Ok(Array.Empty<DomainDto>());
+    }
+}
