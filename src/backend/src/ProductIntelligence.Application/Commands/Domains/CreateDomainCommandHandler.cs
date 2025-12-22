@@ -1,5 +1,5 @@
 using MediatR;
-using ProductIntelligence.Application.Commands.Domains;
+using ProductIntelligence.Application.DTOs;
 using ProductIntelligence.Core.Entities;
 using ProductIntelligence.Core.Interfaces.Repositories;
 
@@ -42,12 +42,13 @@ public class CreateDomainCommandHandler : IRequestHandler<CreateDomainCommand, D
         {
             Id = domain.Id,
             OrganizationId = domain.OrganizationId,
-            ParentDomainId = domain.ParentDomainId,
             Name = domain.Name,
-            Description = domain.Description,
+            Description = domain.Description ?? string.Empty,
             Path = domain.Path,
+            ParentId = domain.ParentDomainId,
             Level = domain.GetLevel(),
             FeatureCount = 0,
+            HasChildren = false,
             CreatedAt = domain.CreatedAt,
             UpdatedAt = domain.UpdatedAt
         };

@@ -7,8 +7,6 @@ public interface IFeatureRepository : IRepository<Feature>
 {
     Task<IEnumerable<Feature>> GetByDomainIdAsync(Guid domainId, CancellationToken cancellationToken = default);
     Task<IEnumerable<Feature>> GetByStatusAsync(FeatureStatus status, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Feature>> GetByPriorityAsync(Priority priority, CancellationToken cancellationToken = default);
-    Task<int> GetVoteCountAsync(Guid featureId, CancellationToken cancellationToken = default);
-    Task<int> GetWeightedVoteCountAsync(Guid featureId, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Feature>> SearchAsync(string query, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Feature>> FindSimilarAsync(float[] embeddingVector, double threshold = 0.85, int limit = 10, CancellationToken cancellationToken = default);
+    Task UpdatePriorityAsync(Guid id, decimal score, string reasoning, CancellationToken cancellationToken = default);
 }

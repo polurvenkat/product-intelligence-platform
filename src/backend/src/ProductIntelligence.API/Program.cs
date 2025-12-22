@@ -30,14 +30,22 @@ builder.Services.AddFluentMigratorCore()
 
 // Repositories
 builder.Services.AddScoped<IDomainRepository, DomainRepository>();
+builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
 builder.Services.AddScoped<IFeatureRequestRepository, FeatureRequestRepository>();
+builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+builder.Services.AddScoped<IFeatureVoteRepository, FeatureVoteRepository>();
+builder.Services.AddScoped<IDomainGoalRepository, DomainGoalRepository>();
 
 // Azure Services
 builder.Services.AddSingleton<IAzureOpenAIService, AzureOpenAIService>();
 
+// AI Agents
+builder.Services.AddScoped<IFeatureDeduplicationAgent, FeatureDeduplicationAgent>();
+
 // MediatR
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(ProductIntelligence.Application.Commands.Domains.CreateDomainCommand).Assembly);
+    cfg.AddOpenBehavior(typeof(ProductIntelligence.Application.Behaviors.ValidationBehavior<,>));
 });
 
 // Validation

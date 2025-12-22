@@ -15,14 +15,24 @@ public record SubmitFeatureRequestCommand : IRequest<FeatureRequestDto>
     public string? SourceId { get; init; }
 }
 
+/// <summary>
+/// Data transfer object for feature requests.
+/// </summary>
 public record FeatureRequestDto
 {
     public Guid Id { get; init; }
     public string Title { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
+    public RequestSource Source { get; init; }
+    public string? SourceId { get; init; }
     public string RequesterName { get; init; } = string.Empty;
+    public string? RequesterEmail { get; init; }
     public string? RequesterCompany { get; init; }
     public CustomerTier RequesterTier { get; init; }
     public RequestStatus Status { get; init; }
     public DateTime SubmittedAt { get; init; }
+    public DateTime? ProcessedAt { get; init; }
+    public Guid? LinkedFeatureId { get; init; }
+    public Guid? DuplicateOfRequestId { get; init; }
+    public decimal? SimilarityScore { get; init; }
 }
