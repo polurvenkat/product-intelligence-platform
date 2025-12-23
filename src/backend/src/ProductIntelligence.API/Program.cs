@@ -5,6 +5,7 @@ using ProductIntelligence.Infrastructure.Data;
 using ProductIntelligence.Infrastructure.Repositories;
 using ProductIntelligence.Infrastructure.AI;
 using ProductIntelligence.Core.Interfaces.Repositories;
+using ProductIntelligence.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,16 +88,37 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure pipeline
+// Swagger must be early in the pipeline to serve static files
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Intelligence API v1");
+        c.RoutePrefix = string.Empty; // Serve Swagger UI at root (http://localhost:5000)
+    });
 }
 
 app.UseHttpsRedirection();
+
+// Routing must come before CORS, Auth, and custom middleware
+app.UseRouting();
+
 app.UseCors();
+
+// Global exception handler (after routing but before authorization)
+app.UseGlobalExceptionHandler();
+
+// Request logging
+app.UseRequestLogging();
+
 app.UseAuthorization();
+
+// Map endpoints
 app.MapControllers();
 app.MapHealthChecks("/health");
 
 app.Run();
+
+// Make the implicit Program class public for integration tests
+public partial class Program { }
