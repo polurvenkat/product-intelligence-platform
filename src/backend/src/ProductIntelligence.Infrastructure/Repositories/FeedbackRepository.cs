@@ -18,40 +18,28 @@ public class FeedbackRepository : IFeedbackRepository
     public async Task<Feedback?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
-        const string sql = @"
-            SELECT id, feature_id, feature_request_id, user_id, content, sentiment,
-                   sentiment_confidence, created_at
-            FROM feedback WHERE id = @Id";
+        const string sql = "SELECT * FROM feedback WHERE id = @Id";
         return await connection.QuerySingleOrDefaultAsync<Feedback>(sql, new { Id = id });
     }
 
     public async Task<IEnumerable<Feedback>> GetByFeatureIdAsync(Guid featureId, CancellationToken cancellationToken = default)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
-        const string sql = @"
-            SELECT id, feature_id, feature_request_id, user_id, content, sentiment,
-                   sentiment_confidence, created_at
-            FROM feedback WHERE feature_id = @FeatureId ORDER BY created_at DESC";
+        const string sql = "SELECT * FROM feedback WHERE feature_id = @FeatureId ORDER BY submitted_at DESC";
         return await connection.QueryAsync<Feedback>(sql, new { FeatureId = featureId });
     }
 
     public async Task<IEnumerable<Feedback>> GetByRequestIdAsync(Guid featureRequestId, CancellationToken cancellationToken = default)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
-        const string sql = @"
-            SELECT id, feature_id, feature_request_id, user_id, content, sentiment,
-                   sentiment_confidence, created_at
-            FROM feedback WHERE feature_request_id = @FeatureRequestId ORDER BY created_at DESC";
+        const string sql = "SELECT * FROM feedback WHERE feature_request_id = @FeatureRequestId ORDER BY submitted_at DESC";
         return await connection.QueryAsync<Feedback>(sql, new { FeatureRequestId = featureRequestId });
     }
 
     public async Task<IEnumerable<Feedback>> GetBySentimentAsync(Guid featureId, Sentiment sentiment, CancellationToken cancellationToken = default)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
-        const string sql = @"
-            SELECT id, feature_id, feature_request_id, user_id, content, sentiment,
-                   sentiment_confidence, created_at
-            FROM feedback WHERE feature_id = @FeatureId AND sentiment = @Sentiment ORDER BY created_at DESC";
+        const string sql = "SELECT * FROM feedback WHERE feature_id = @FeatureId AND sentiment = @Sentiment ORDER BY submitted_at DESC";
         return await connection.QueryAsync<Feedback>(sql, new { FeatureId = featureId, Sentiment = sentiment.ToString() });
     }
 
@@ -60,9 +48,9 @@ public class FeedbackRepository : IFeedbackRepository
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         const string sql = @"
             INSERT INTO feedback (id, feature_id, feature_request_id, content, sentiment,
-                source, customer_id, customer_tier, embedding_vector, submitted_at, created_at, updated_at)
+                source, customer_id, customer_tier, embedding_vector, submitted_at)
             VALUES (@Id, @FeatureId, @FeatureRequestId, @Content, @Sentiment,
-                @Source, @CustomerId, @CustomerTier, @EmbeddingVector::vector, @SubmittedAt, @CreatedAt, @UpdatedAt)
+                @Source, @CustomerId, @CustomerTier, @EmbeddingVector::vector, @SubmittedAt)
             RETURNING id";
         
         return await connection.ExecuteScalarAsync<Guid>(sql, entity);

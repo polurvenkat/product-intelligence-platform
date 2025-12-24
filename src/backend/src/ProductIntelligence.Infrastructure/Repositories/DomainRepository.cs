@@ -56,7 +56,7 @@ public class DomainRepository : IDomainRepository
 
     public async Task<IEnumerable<Domain>> GetChildrenAsync(Guid parentId, CancellationToken cancellationToken = default)
     {
-        const string sql = "SELECT * FROM domains WHERE parent_id = @ParentId ORDER BY name";
+        const string sql = "SELECT * FROM domains WHERE parent_domain_id = @ParentId ORDER BY name";
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         return await connection.QueryAsync<Domain>(sql, new { ParentId = parentId });
     }
@@ -70,7 +70,7 @@ public class DomainRepository : IDomainRepository
 
     public async Task<bool> HasChildrenAsync(Guid domainId, CancellationToken cancellationToken = default)
     {
-        const string sql = "SELECT EXISTS(SELECT 1 FROM domains WHERE parent_id = @DomainId)";
+        const string sql = "SELECT EXISTS(SELECT 1 FROM domains WHERE parent_domain_id = @DomainId)";
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         return await connection.ExecuteScalarAsync<bool>(sql, new { DomainId = domainId });
     }
@@ -87,7 +87,7 @@ public class DomainRepository : IDomainRepository
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         const string sql = @"
             INSERT INTO domains (id, organization_id, parent_domain_id, name, description, path, owner_user_id, created_at, updated_at, metadata)
-            VALUES (@Id, @OrganizationId, @ParentDomainId, @Name, @Description, @Path, @OwnerUserId, @CreatedAt, @UpdatedAt, @Metadata::jsonb)
+            VALUES (@Id, @OrganizationId, @ParentDomainId, @Name, @Description, @Path::ltree, @OwnerUserId, @CreatedAt, @UpdatedAt, @Metadata::jsonb)
             RETURNING id";
         
         return await connection.ExecuteScalarAsync<Guid>(sql, entity);
@@ -100,7 +100,7 @@ public class DomainRepository : IDomainRepository
             UPDATE domains
             SET name = @Name,
                 description = @Description,
-                path = @Path,
+                path = @Path::ltree,
                 parent_domain_id = @ParentDomainId,
                 owner_user_id = @OwnerUserId,
                 metadata = @Metadata::jsonb,
@@ -115,7 +115,7 @@ public class DomainRepository : IDomainRepository
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         
         // Check for child domains
-        const string checkChildrenSql = "SELECT COUNT(*) FROM domains WHERE parent_id = @Id";
+        const string checkChildrenSql = "SELECT COUNT(*) FROM domains WHERE parent_domain_id = @Id";
         var childCount = await connection.ExecuteScalarAsync<int>(checkChildrenSql, new { Id = id });
         
         if (childCount > 0)

@@ -116,10 +116,10 @@ public class FeatureRepository : IFeatureRepository
         const string sql = @"
             INSERT INTO features (id, domain_id, title, description, status, priority, 
                 estimated_effort_points, business_value_score, ai_priority_score, 
-                ai_priority_reasoning, target_release_date, created_at, updated_at)
+                ai_priority_reasoning, target_release, created_by, created_at, updated_at)
             VALUES (@Id, @DomainId, @Title, @Description, @Status, @Priority,
                 @EstimatedEffortPoints, @BusinessValueScore, @AiPriorityScore,
-                @AiPriorityReasoning, @TargetReleaseDate, @CreatedAt, @UpdatedAt)
+                @AiPriorityReasoning, @TargetRelease, @CreatedBy, @CreatedAt, @UpdatedAt)
             RETURNING id";
         
         return await connection.ExecuteScalarAsync<Guid>(sql, entity);
@@ -136,7 +136,7 @@ public class FeatureRepository : IFeatureRepository
                 priority = @Priority,
                 estimated_effort_points = @EstimatedEffortPoints,
                 business_value_score = @BusinessValueScore,
-                target_release_date = @TargetReleaseDate,
+                target_release = @TargetRelease,
                 updated_at = @UpdatedAt
             WHERE id = @Id";
         

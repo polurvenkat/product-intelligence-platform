@@ -43,12 +43,21 @@ public class FeatureVoteRepository : IFeatureVoteRepository
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         const string sql = @"
             INSERT INTO feature_votes (id, feature_id, feature_request_id, voter_email,
-                voter_company, voter_tier, vote_weight, voted_at, created_at, updated_at)
+                voter_company, voter_tier, vote_weight, voted_at)
             VALUES (@Id, @FeatureId, @FeatureRequestId, @VoterEmail,
-                @VoterCompany, @VoterTier, @VoteWeight, @VotedAt, @CreatedAt, @UpdatedAt)
+                @VoterCompany, @VoterTier, @VoteWeight, @VotedAt)
             RETURNING id";
         
-        return await connection.ExecuteScalarAsync<Guid>(sql, entity);
+        return await connection.ExecuteScalarAsync<Guid>(sql, new {
+            entity.Id,
+            entity.FeatureId,
+            entity.FeatureRequestId,
+            entity.VoterEmail,
+            entity.VoterCompany,
+            entity.VoterTier,
+            entity.VoteWeight,
+            entity.VotedAt
+        });
     }
 
     public async Task DeleteAsync(Guid featureId, string voterEmail, CancellationToken cancellationToken = default)

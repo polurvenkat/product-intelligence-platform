@@ -6,6 +6,7 @@ using ProductIntelligence.Infrastructure.Repositories;
 using ProductIntelligence.Infrastructure.AI;
 using ProductIntelligence.Core.Interfaces.Repositories;
 using ProductIntelligence.API.Middleware;
+using Dapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found");
 
 builder.Services.AddSingleton<IDbConnectionFactory>(new NpgsqlConnectionFactory(connectionString));
+
+// Configure Dapper to map snake_case columns to PascalCase properties
+DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 // FluentMigrator
 builder.Services.AddFluentMigratorCore()
@@ -46,6 +50,7 @@ builder.Services.AddScoped<IFeatureDeduplicationAgent, FeatureDeduplicationAgent
 // MediatR
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(ProductIntelligence.Application.Commands.Domains.CreateDomainCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(ProductIntelligence.Infrastructure.Repositories.DomainRepository).Assembly);
     cfg.AddOpenBehavior(typeof(ProductIntelligence.Application.Behaviors.ValidationBehavior<,>));
 });
 

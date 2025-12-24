@@ -23,6 +23,7 @@ public class FeatureVote
     public int VoteWeight { get; private set; }
     
     public DateTime VotedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
 
     private FeatureVote() { } // For Dapper
 

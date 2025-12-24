@@ -111,11 +111,11 @@ public class FeatureRequestRepository : IFeatureRequestRepository
             INSERT INTO feature_requests (id, title, description, status, source, source_id,
                 requester_name, requester_email, requester_company, requester_tier,
                 linked_feature_id, duplicate_of_request_id, similarity_score,
-                submitted_at, created_at, updated_at)
+                submitted_at)
             VALUES (@Id, @Title, @Description, @Status, @Source, @SourceId,
                 @RequesterName, @RequesterEmail, @RequesterCompany, @RequesterTier,
                 @LinkedFeatureId, @DuplicateOfRequestId, @SimilarityScore,
-                @SubmittedAt, @CreatedAt, @UpdatedAt)
+                @SubmittedAt)
             RETURNING id";
         
         return await connection.ExecuteScalarAsync<Guid>(sql, entity);
@@ -129,8 +129,7 @@ public class FeatureRequestRepository : IFeatureRequestRepository
             SET status = @Status,
                 linked_feature_id = @LinkedFeatureId,
                 duplicate_of_request_id = @DuplicateOfRequestId,
-                similarity_score = @SimilarityScore,
-                updated_at = @UpdatedAt
+                similarity_score = @SimilarityScore
             WHERE id = @Id";
         
         await connection.ExecuteAsync(sql, entity);
