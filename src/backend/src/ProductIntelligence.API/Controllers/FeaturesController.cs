@@ -53,6 +53,19 @@ public class FeaturesController : ControllerBase
     }
 
     /// <summary>
+    /// Get all features
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<FeatureDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<FeatureDto>>> GetAllFeatures(
+        CancellationToken cancellationToken)
+    {
+        var query = new GetAllFeaturesQuery();
+        var result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Get a feature by ID
     /// </summary>
     [HttpGet("{id:guid}")]

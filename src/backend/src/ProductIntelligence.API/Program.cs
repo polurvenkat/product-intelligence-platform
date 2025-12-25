@@ -6,6 +6,10 @@ using ProductIntelligence.Infrastructure.Repositories;
 using ProductIntelligence.Infrastructure.AI;
 using ProductIntelligence.Core.Interfaces.Repositories;
 using ProductIntelligence.API.Middleware;
+using ProductIntelligence.Application.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Dapper;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,12 +38,16 @@ builder.Services.AddFluentMigratorCore()
     .AddLogging(lb => lb.AddFluentMigratorConsole());
 
 // Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDomainRepository, DomainRepository>();
 builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
 builder.Services.AddScoped<IFeatureRequestRepository, FeatureRequestRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IFeatureVoteRepository, FeatureVoteRepository>();
 builder.Services.AddScoped<IDomainGoalRepository, DomainGoalRepository>();
+
+// Services
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Azure Services
 builder.Services.AddSingleton<IAzureOpenAIService, AzureOpenAIService>();
@@ -59,6 +67,29 @@ builder.Services.AddValidatorsFromAssembly(typeof(ProductIntelligence.Applicatio
 
 // Controllers
 builder.Services.AddControllers();
+
+// JWT Authentication
+var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "YourSuperSecretKeyThatIsAtLeast32CharactersLong!";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "ProductIntelligence";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "ProductIntelligenceApp";
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
@@ -110,6 +141,10 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseCors();
+
+// Authentication & Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Global exception handler (after routing but before authorization)
 app.UseGlobalExceptionHandler();
