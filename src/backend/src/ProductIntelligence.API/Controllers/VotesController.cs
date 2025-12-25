@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductIntelligence.Application.DTOs;
 using ProductIntelligence.Application.Votes.Commands;
@@ -9,6 +10,7 @@ namespace ProductIntelligence.API.Controllers;
 /// <summary>
 /// Manages voting for features and feature requests.
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class VotesController : ControllerBase

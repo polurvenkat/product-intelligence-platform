@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using OpenAI.Chat;
 using ProductIntelligence.Core.Entities;
 using ProductIntelligence.Core.Interfaces.Repositories;
+using ProductIntelligence.Application.Interfaces.AI;
 using ProductIntelligence.Infrastructure.AI.Models;
 using AIMatchType = ProductIntelligence.Infrastructure.AI.Models.MatchType;
 

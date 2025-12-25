@@ -150,6 +150,21 @@ public class FeatureRepository : IFeatureRepository
         await connection.ExecuteAsync(sql, new { Id = id });
     }
 
+    public async Task<IEnumerable<FeatureWithVoteCount>> GetTopFeaturesAsync(int limit = 5, CancellationToken cancellationToken = default)
+    {
+        using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
+        const string sql = @"
+            SELECT f.*, 
+                   COUNT(fv.id) as vote_count,
+                   COALESCE(SUM(fv.vote_weight), 0) as weighted_vote_count
+            FROM features f
+            LEFT JOIN feature_votes fv ON f.id = fv.feature_id
+            GROUP BY f.id
+            ORDER BY f.ai_priority_score DESC NULLS LAST, weighted_vote_count DESC, f.created_at DESC
+            LIMIT @Limit";
+        return await connection.QueryAsync<FeatureWithVoteCount>(sql, new { Limit = limit });
+    }
+
     public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
@@ -157,26 +172,4 @@ public class FeatureRepository : IFeatureRepository
         var count = await connection.ExecuteScalarAsync<int>(sql, new { Id = id });
         return count > 0;
     }
-}
-
-public record FeatureWithVoteCount
-{
-    public Guid Id { get; init; }
-    public Guid DomainId { get; init; }
-    public Guid? ParentFeatureId { get; init; }
-    public string Title { get; init; } = string.Empty;
-    public string Description { get; init; } = string.Empty;
-    public string Status { get; init; } = string.Empty;
-    public string Priority { get; init; } = string.Empty;
-    public decimal AiPriorityScore { get; init; }
-    public string? AiPriorityReasoning { get; init; }
-    public int? EstimatedEffortPoints { get; init; }
-    public decimal? BusinessValueScore { get; init; }
-    public Guid CreatedBy { get; init; }
-    public DateTime CreatedAt { get; init; }
-    public DateTime UpdatedAt { get; init; }
-    public string? TargetRelease { get; init; }
-    public string? Metadata { get; init; }
-    public long VoteCount { get; init; }
-    public long WeightedVoteCount { get; init; }
 }

@@ -4,6 +4,7 @@ using ProductIntelligence.Application.DTOs;
 using ProductIntelligence.Application.Queries.Search;
 using ProductIntelligence.Core.Interfaces.Repositories;
 using ProductIntelligence.Infrastructure.AI;
+using ProductIntelligence.Application.Interfaces.AI;
 
 namespace ProductIntelligence.Infrastructure.Handlers;
 

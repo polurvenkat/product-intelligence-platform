@@ -4,26 +4,9 @@ using Microsoft.Extensions.Options;
 using ProductIntelligence.Infrastructure.Configuration;
 using OpenAI.Chat;
 using OpenAI.Embeddings;
+using ProductIntelligence.Application.Interfaces.AI;
 
 namespace ProductIntelligence.Infrastructure.AI;
-
-public interface IAzureOpenAIService
-{
-    Task<string> CompleteChatAsync(
-        IEnumerable<ChatMessage> messages,
-        double? temperature = null,
-        int? maxTokens = null,
-        CancellationToken cancellationToken = default);
-
-    Task<float[]> GenerateEmbeddingAsync(
-        string text,
-        CancellationToken cancellationToken = default);
-
-    IAsyncEnumerable<string> StreamChatAsync(
-        IEnumerable<ChatMessage> messages,
-        double? temperature = null,
-        CancellationToken cancellationToken = default);
-}
 
 public class AzureOpenAIService : IAzureOpenAIService
 {

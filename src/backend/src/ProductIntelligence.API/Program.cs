@@ -4,6 +4,7 @@ using ProductIntelligence.Infrastructure.Configuration;
 using ProductIntelligence.Infrastructure.Data;
 using ProductIntelligence.Infrastructure.Repositories;
 using ProductIntelligence.Infrastructure.AI;
+using ProductIntelligence.Application.Interfaces.AI;
 using ProductIntelligence.Core.Interfaces.Repositories;
 using ProductIntelligence.API.Middleware;
 using ProductIntelligence.Application.Services;
@@ -151,8 +152,6 @@ app.UseGlobalExceptionHandler();
 
 // Request logging
 app.UseRequestLogging();
-
-app.UseAuthorization();
 
 // Map endpoints
 app.MapControllers();

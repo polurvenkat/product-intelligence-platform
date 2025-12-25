@@ -1,4 +1,5 @@
 using ProductIntelligence.Infrastructure.AI;
+using ProductIntelligence.Application.Interfaces.AI;
 using ProductIntelligence.Infrastructure.Configuration;
 using ProductIntelligence.Infrastructure.Data;
 using ProductIntelligence.Infrastructure.Repositories;

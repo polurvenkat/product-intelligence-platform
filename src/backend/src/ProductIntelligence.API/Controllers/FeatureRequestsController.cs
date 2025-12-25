@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductIntelligence.Application.Commands.FeatureRequests;
 using ProductIntelligence.Application.Queries.FeatureRequests;
@@ -9,6 +10,7 @@ namespace ProductIntelligence.API.Controllers;
 /// <summary>
 /// Manages feature requests and their lifecycle.
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/feature-requests")]
 public class FeatureRequestsController : ControllerBase

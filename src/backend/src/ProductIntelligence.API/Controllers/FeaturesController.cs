@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductIntelligence.Application.Commands.Features;
 using ProductIntelligence.Application.Queries.Features;
@@ -10,6 +11,7 @@ namespace ProductIntelligence.API.Controllers;
 /// <summary>
 /// Manages features within domains
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/features")]
 [Produces("application/json")]

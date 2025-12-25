@@ -3,6 +3,7 @@ using OpenAI.Chat;
 using ProductIntelligence.Core.Enums;
 using ProductIntelligence.Core.Interfaces.Repositories;
 using ProductIntelligence.Infrastructure.AI;
+using ProductIntelligence.Application.Interfaces.AI;
 
 namespace ProductIntelligence.Workers;
 

@@ -5,6 +5,7 @@ using ProductIntelligence.Core.Entities;
 using ProductIntelligence.Core.Enums;
 using ProductIntelligence.Core.Interfaces.Repositories;
 using ProductIntelligence.Infrastructure.AI;
+using ProductIntelligence.Application.Interfaces.AI;
 
 namespace ProductIntelligence.Infrastructure.CommandHandlers.FeatureRequests;
 

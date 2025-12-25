@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductIntelligence.Application.Commands.Domains;
 using ProductIntelligence.Application.Queries.Domains;
@@ -6,6 +7,7 @@ using ProductIntelligence.Application.DTOs;
 
 namespace ProductIntelligence.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class DomainsController : ControllerBase

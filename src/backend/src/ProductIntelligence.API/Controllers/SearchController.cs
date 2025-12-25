@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductIntelligence.Application.DTOs;
 using ProductIntelligence.Application.Queries.Search;
@@ -9,6 +10,7 @@ namespace ProductIntelligence.API.Controllers;
 /// <summary>
 /// Provides semantic search and filtering capabilities for features and requests.
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class SearchController : ControllerBase
