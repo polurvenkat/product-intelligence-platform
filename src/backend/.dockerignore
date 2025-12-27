@@ -1,0 +1,11 @@
+**/.git
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/out
+**/*.user
+**/*.lock.json
+**/.DS_Store
+**/node_modules
+**/TestResults

@@ -10,5 +10,6 @@ public enum RequestSource
     HubSpot,
     Email,
     Slack,
+    Teams,
     API
 }

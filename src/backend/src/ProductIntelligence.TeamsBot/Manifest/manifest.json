@@ -1,0 +1,43 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.13/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.13",
+  "version": "1.0.2",
+  "id": "b793643c-5e0f-4dba-902b-c592aac63065",
+  "packageName": "com.productintelligence.teamsbot",
+  "developer": {
+    "name": "Product Intelligence",
+    "websiteUrl": "https://www.productintelligence.io",
+    "privacyUrl": "https://www.productintelligence.io/privacy",
+    "termsOfUseUrl": "https://www.productintelligence.io/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Product Intel Agent",
+    "full": "Product Intelligence AI Agent"
+  },
+  "description": {
+    "short": "AI-powered product feedback analyzer.",
+    "full": "Automatically captures and categorizes feature requests from Teams into your Product Intelligence dashboard."
+  },
+  "accentColor": "#4B53BC",
+  "bots": [
+    {
+      "botId": "b793643c-5e0f-4dba-902b-c592aac63065",
+      "scopes": [
+        "personal",
+        "team",
+        "groupchat"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": []
+}
