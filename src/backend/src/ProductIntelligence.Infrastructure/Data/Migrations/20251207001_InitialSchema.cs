@@ -7,7 +7,7 @@ public class InitialSchema : Migration
 {
     public override void Up()
     {
-        // Enable extensions
+        // Enable extensions (must be allow-listed in Azure via azure.extensions first)
         Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"ltree\";");
         Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"vector\";");
 
