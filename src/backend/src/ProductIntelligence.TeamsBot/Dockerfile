@@ -6,7 +6,6 @@ WORKDIR /src
 COPY ["src/ProductIntelligence.TeamsBot/ProductIntelligence.TeamsBot.csproj", "src/ProductIntelligence.TeamsBot/"]
 COPY ["src/ProductIntelligence.Application/ProductIntelligence.Application.csproj", "src/ProductIntelligence.Application/"]
 COPY ["src/ProductIntelligence.Infrastructure/ProductIntelligence.Infrastructure.csproj", "src/ProductIntelligence.Infrastructure/"]
-COPY ["src/ProductIntelligence.Domain/ProductIntelligence.Domain.csproj", "src/ProductIntelligence.Domain/"]
 COPY ["src/ProductIntelligence.Core/ProductIntelligence.Core.csproj", "src/ProductIntelligence.Core/"]
 
 RUN dotnet restore "src/ProductIntelligence.TeamsBot/ProductIntelligence.TeamsBot.csproj"
