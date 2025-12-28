@@ -1,0 +1,75 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/backend/src/ProductIntelligence.API/*
+      - src/backend/src/ProductIntelligence.Application/*
+      - src/backend/src/ProductIntelligence.Domain/*
+      - src/backend/src/ProductIntelligence.Infrastructure/*
+      - src/backend/src/ProductIntelligence.Core/*
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: Release
+  imageName: product-intelligence-api
+  imageTag: $(Build.BuildId)
+
+steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET 9.0'
+    inputs:
+      packageType: 'sdk'
+      version: '9.0.x'
+
+  # Restore and Build
+  - script: |
+      dotnet restore src/backend/ProductIntelligence.sln
+      dotnet build src/backend/ProductIntelligence.sln --configuration $(buildConfiguration)
+    displayName: 'Build Solution'
+
+  # Publish API
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish API'
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: 'src/backend/src/ProductIntelligence.API/ProductIntelligence.API.csproj'
+      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/app'
+      zipAfterPublish: false
+
+  # Build Docker image (Local build, no push)
+  - script: |
+      docker build -t $(imageName):$(imageTag) -f src/backend/src/ProductIntelligence.API/Dockerfile src/backend
+    displayName: 'Build Docker image'
+
+  # Save Docker image to TAR and stage files
+  - script: |
+      set -e
+      mkdir -p "$(Build.ArtifactStagingDirectory)/docker-image/app"
+
+      # Zip API build output
+      (cd "$(Build.ArtifactStagingDirectory)/app" && zip -r "$(Build.ArtifactStagingDirectory)/docker-image/app/s.zip" .)
+      
+      # Save API image
+      echo 'Saving API Docker image as TAR...'
+      docker save $(imageName):$(imageTag) -o "$(Build.ArtifactStagingDirectory)/docker-image/$(imageName)_$(imageTag).tar"
+    displayName: 'Stage docker-image artifacts'
+
+  # Copy deployment scripts
+  - task: CopyFiles@2
+    displayName: 'Copy deployment scripts'
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)/scripts'
+      contents: '*.sh'
+      targetFolder: '$(Build.ArtifactStagingDirectory)/scripts'
+
+  # Publish artifact
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'drop'
