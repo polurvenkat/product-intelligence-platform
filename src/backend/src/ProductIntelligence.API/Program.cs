@@ -12,8 +12,24 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Dapper;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Azure Key Vault Configuration
+var keyVaultUrl = builder.Configuration["KeyVault:Url"] ?? "https://farmerapp-configuration.vault.azure.net/";
+if (!string.IsNullOrEmpty(keyVaultUrl))
+{
+    var managedIdentityClientId = builder.Configuration["Azure:ManagedIdentityClientId"];
+    var credentialOptions = new DefaultAzureCredentialOptions();
+    
+    if (!string.IsNullOrEmpty(managedIdentityClientId))
+    {
+        credentialOptions.ManagedIdentityClientId = managedIdentityClientId;
+    }
+
+    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUrl), new DefaultAzureCredential(credentialOptions));
+}
 
 // Configuration
 builder.Services.Configure<AzureOpenAIOptions>(builder.Configuration.GetSection("AzureOpenAI"));
@@ -22,8 +38,9 @@ builder.Services.Configure<AzureBlobStorageOptions>(builder.Configuration.GetSec
 builder.Services.Configure<RedisOptions>(builder.Configuration.GetSection("Redis"));
 
 // Database
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found");
+var connectionString = builder.Configuration.GetConnectionString("ProductIntelligencePlatformDb") 
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'ProductIntelligencePlatformDb' or 'DefaultConnection' not found");
 
 builder.Services.AddSingleton<IDbConnectionFactory>(new NpgsqlConnectionFactory(connectionString));
 

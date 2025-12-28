@@ -1,5 +1,6 @@
 using Azure;
 using Azure.AI.OpenAI;
+using Azure.Identity;
 using Microsoft.Extensions.Options;
 using ProductIntelligence.Infrastructure.Configuration;
 using OpenAI.Chat;
@@ -18,9 +19,25 @@ public class AzureOpenAIService : IAzureOpenAIService
     public AzureOpenAIService(IOptions<AzureOpenAIOptions> options)
     {
         _options = options.Value;
-        _client = new AzureOpenAIClient(
-            new Uri(_options.Endpoint),
-            new AzureKeyCredential(_options.ApiKey));
+
+        if (string.IsNullOrEmpty(_options.ApiKey))
+        {
+            var credentialOptions = new DefaultAzureCredentialOptions();
+            if (!string.IsNullOrEmpty(_options.ManagedIdentityClientId))
+            {
+                credentialOptions.ManagedIdentityClientId = _options.ManagedIdentityClientId;
+            }
+
+            _client = new AzureOpenAIClient(
+                new Uri(_options.Endpoint),
+                new DefaultAzureCredential(credentialOptions));
+        }
+        else
+        {
+            _client = new AzureOpenAIClient(
+                new Uri(_options.Endpoint),
+                new AzureKeyCredential(_options.ApiKey));
+        }
         
         _chatClient = _client.GetChatClient(_options.DeploymentName);
         _embeddingClient = _client.GetEmbeddingClient(_options.EmbeddingDeploymentName);
