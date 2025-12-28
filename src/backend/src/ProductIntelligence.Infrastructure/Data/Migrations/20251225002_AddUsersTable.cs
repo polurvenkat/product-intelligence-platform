@@ -8,7 +8,7 @@ public class AddUsersTable : Migration
     public override void Up()
     {
         Create.Table("users")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
+            .WithColumn("id").AsGuid().PrimaryKey()
             .WithColumn("email").AsString(255).NotNullable().Unique()
             .WithColumn("name").AsString(255).NotNullable()
             .WithColumn("company").AsString(255).Nullable()
@@ -18,6 +18,8 @@ public class AddUsersTable : Migration
             .WithColumn("last_login_at").AsDateTime().Nullable()
             .WithColumn("refresh_token").AsString(500).Nullable()
             .WithColumn("refresh_token_expires_at").AsDateTime().Nullable();
+        
+        Execute.Sql("ALTER TABLE users ALTER COLUMN id SET DEFAULT gen_random_uuid();");
         
         Create.Index("idx_users_email")
             .OnTable("users")

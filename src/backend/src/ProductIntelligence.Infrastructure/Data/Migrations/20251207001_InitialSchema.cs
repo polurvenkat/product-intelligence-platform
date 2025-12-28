@@ -13,7 +13,7 @@ public class InitialSchema : Migration
 
         // Domains table (hierarchical)
         Create.Table("domains")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
+            .WithColumn("id").AsGuid().PrimaryKey()
             .WithColumn("organization_id").AsGuid().NotNullable()
             .WithColumn("parent_domain_id").AsGuid().Nullable().ForeignKey("domains", "id")
             .WithColumn("name").AsString(200).NotNullable()
@@ -24,13 +24,15 @@ public class InitialSchema : Migration
             .WithColumn("updated_at").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime)
             .WithColumn("metadata").AsCustom("jsonb").Nullable();
 
+        Execute.Sql("ALTER TABLE domains ALTER COLUMN id SET DEFAULT gen_random_uuid();");
+
         Create.Index("idx_domains_organization").OnTable("domains").OnColumn("organization_id");
         Create.Index("idx_domains_parent").OnTable("domains").OnColumn("parent_domain_id");
         Execute.Sql("CREATE INDEX idx_domains_path ON domains USING GIST (path);");
 
         // Features table
         Create.Table("features")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
+            .WithColumn("id").AsGuid().PrimaryKey()
             .WithColumn("domain_id").AsGuid().NotNullable().ForeignKey("domains", "id")
             .WithColumn("parent_feature_id").AsGuid().Nullable().ForeignKey("features", "id")
             .WithColumn("title").AsString(500).NotNullable()
@@ -47,13 +49,15 @@ public class InitialSchema : Migration
             .WithColumn("target_release").AsString(100).Nullable()
             .WithColumn("metadata").AsCustom("jsonb").Nullable();
 
+        Execute.Sql("ALTER TABLE features ALTER COLUMN id SET DEFAULT gen_random_uuid();");
+
         Create.Index("idx_features_domain").OnTable("features").OnColumn("domain_id");
         Create.Index("idx_features_status").OnTable("features").OnColumn("status");
         Create.Index("idx_features_priority").OnTable("features").OnColumn("priority");
 
         // Feature requests table
         Create.Table("feature_requests")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
+            .WithColumn("id").AsGuid().PrimaryKey()
             .WithColumn("title").AsString(500).NotNullable()
             .WithColumn("description").AsString(int.MaxValue).NotNullable()
             .WithColumn("source").AsString(50).NotNullable().WithDefaultValue("Manual")
@@ -71,13 +75,15 @@ public class InitialSchema : Migration
             .WithColumn("similarity_score").AsDecimal(3, 2).Nullable()
             .WithColumn("metadata").AsCustom("jsonb").Nullable();
 
+        Execute.Sql("ALTER TABLE feature_requests ALTER COLUMN id SET DEFAULT gen_random_uuid();");
+
         Create.Index("idx_feature_requests_status").OnTable("feature_requests").OnColumn("status");
         Create.Index("idx_feature_requests_linked_feature").OnTable("feature_requests").OnColumn("linked_feature_id");
         Execute.Sql("CREATE INDEX idx_feature_requests_embedding ON feature_requests USING ivfflat (embedding_vector vector_cosine_ops) WITH (lists = 100);");
 
         // Feature votes table
         Create.Table("feature_votes")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
+            .WithColumn("id").AsGuid().PrimaryKey()
             .WithColumn("feature_id").AsGuid().Nullable().ForeignKey("features", "id")
             .WithColumn("feature_request_id").AsGuid().Nullable().ForeignKey("feature_requests", "id")
             .WithColumn("voter_email").AsString(200).NotNullable()
@@ -86,6 +92,8 @@ public class InitialSchema : Migration
             .WithColumn("vote_weight").AsInt32().NotNullable().WithDefaultValue(1)
             .WithColumn("voted_at").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
 
+        Execute.Sql("ALTER TABLE feature_votes ALTER COLUMN id SET DEFAULT gen_random_uuid();");
+
         Create.Index("idx_feature_votes_feature").OnTable("feature_votes").OnColumn("feature_id");
         Create.Index("idx_feature_votes_request").OnTable("feature_votes").OnColumn("feature_request_id");
         Execute.Sql("CREATE UNIQUE INDEX idx_feature_votes_unique_feature ON feature_votes (feature_id, voter_email) WHERE feature_id IS NOT NULL;");
@@ -93,7 +101,7 @@ public class InitialSchema : Migration
 
         // Feedback table
         Create.Table("feedback")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
+            .WithColumn("id").AsGuid().PrimaryKey()
             .WithColumn("feature_id").AsGuid().Nullable().ForeignKey("features", "id")
             .WithColumn("feature_request_id").AsGuid().Nullable().ForeignKey("feature_requests", "id")
             .WithColumn("content").AsString(int.MaxValue).NotNullable()
@@ -104,17 +112,21 @@ public class InitialSchema : Migration
             .WithColumn("submitted_at").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime)
             .WithColumn("embedding_vector").AsCustom("vector(1536)").Nullable();
 
+        Execute.Sql("ALTER TABLE feedback ALTER COLUMN id SET DEFAULT gen_random_uuid();");
+
         Create.Index("idx_feedback_feature").OnTable("feedback").OnColumn("feature_id");
         Create.Index("idx_feedback_request").OnTable("feedback").OnColumn("feature_request_id");
 
         // Domain goals table
         Create.Table("domain_goals")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
+            .WithColumn("id").AsGuid().PrimaryKey()
             .WithColumn("domain_id").AsGuid().NotNullable().ForeignKey("domains", "id")
             .WithColumn("goal_description").AsString(int.MaxValue).NotNullable()
             .WithColumn("target_quarter").AsString(10).Nullable()
             .WithColumn("priority").AsInt32().NotNullable().WithDefaultValue(1)
             .WithColumn("created_at").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
+
+        Execute.Sql("ALTER TABLE domain_goals ALTER COLUMN id SET DEFAULT gen_random_uuid();");
 
         Create.Index("idx_domain_goals_domain").OnTable("domain_goals").OnColumn("domain_id");
     }
