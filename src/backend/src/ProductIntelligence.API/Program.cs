@@ -18,17 +18,28 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Azure Key Vault Configuration
 var keyVaultUrl = builder.Configuration["KeyVault:Url"] ?? "https://farmerapp-configuration.vault.azure.net/";
+Console.WriteLine($"[Config] Attempting to use Key Vault: {keyVaultUrl}");
+
 if (!string.IsNullOrEmpty(keyVaultUrl))
 {
-    var managedIdentityClientId = builder.Configuration["Azure:ManagedIdentityClientId"];
-    var credentialOptions = new DefaultAzureCredentialOptions();
-    
-    if (!string.IsNullOrEmpty(managedIdentityClientId))
+    try 
     {
-        credentialOptions.ManagedIdentityClientId = managedIdentityClientId;
-    }
+        var managedIdentityClientId = builder.Configuration["Azure:ManagedIdentityClientId"];
+        var credentialOptions = new DefaultAzureCredentialOptions();
+        
+        if (!string.IsNullOrEmpty(managedIdentityClientId))
+        {
+            credentialOptions.ManagedIdentityClientId = managedIdentityClientId;
+            Console.WriteLine($"[Config] Using User-Assigned Managed Identity Client ID: {managedIdentityClientId}");
+        }
 
-    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUrl), new DefaultAzureCredential(credentialOptions));
+        builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUrl), new DefaultAzureCredential(credentialOptions));
+        Console.WriteLine("[Config] Azure Key Vault configuration provider added.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[Config] Error adding Key Vault: {ex.Message}");
+    }
 }
 
 // Configuration
@@ -38,9 +49,24 @@ builder.Services.Configure<AzureBlobStorageOptions>(builder.Configuration.GetSec
 builder.Services.Configure<RedisOptions>(builder.Configuration.GetSection("Redis"));
 
 // Database
-var connectionString = builder.Configuration.GetConnectionString("ProductIntelligencePlatformDb") 
-    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+var kvConnectionString = builder.Configuration.GetConnectionString("ProductIntelligencePlatformDb");
+var defaultConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+var connectionString = kvConnectionString ?? defaultConnectionString
     ?? throw new InvalidOperationException("Connection string 'ProductIntelligencePlatformDb' or 'DefaultConnection' not found");
+
+if (!string.IsNullOrEmpty(kvConnectionString))
+{
+    Console.WriteLine("[Config] Using connection string from Key Vault (ProductIntelligencePlatformDb).");
+}
+else
+{
+    Console.WriteLine("[Config] Falling back to DefaultConnection from appsettings.");
+}
+
+// Mask password for logging
+var maskedConnectionString = System.Text.RegularExpressions.Regex.Replace(connectionString, @"Password=[^;]+", "Password=****");
+Console.WriteLine($"[Config] Connection String: {maskedConnectionString}");
 
 builder.Services.AddSingleton<IDbConnectionFactory>(new NpgsqlConnectionFactory(connectionString));
 
