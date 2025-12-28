@@ -8,13 +8,12 @@ public class InitialSchema : Migration
     public override void Up()
     {
         // Enable extensions
-        Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
         Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"ltree\";");
         Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"vector\";");
 
         // Domains table (hierarchical)
         Create.Table("domains")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefaultValue(SystemMethods.NewGuid)
+            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
             .WithColumn("organization_id").AsGuid().NotNullable()
             .WithColumn("parent_domain_id").AsGuid().Nullable().ForeignKey("domains", "id")
             .WithColumn("name").AsString(200).NotNullable()
@@ -31,7 +30,7 @@ public class InitialSchema : Migration
 
         // Features table
         Create.Table("features")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefaultValue(SystemMethods.NewGuid)
+            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
             .WithColumn("domain_id").AsGuid().NotNullable().ForeignKey("domains", "id")
             .WithColumn("parent_feature_id").AsGuid().Nullable().ForeignKey("features", "id")
             .WithColumn("title").AsString(500).NotNullable()
@@ -54,7 +53,7 @@ public class InitialSchema : Migration
 
         // Feature requests table
         Create.Table("feature_requests")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefaultValue(SystemMethods.NewGuid)
+            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
             .WithColumn("title").AsString(500).NotNullable()
             .WithColumn("description").AsString(int.MaxValue).NotNullable()
             .WithColumn("source").AsString(50).NotNullable().WithDefaultValue("Manual")
@@ -78,7 +77,7 @@ public class InitialSchema : Migration
 
         // Feature votes table
         Create.Table("feature_votes")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefaultValue(SystemMethods.NewGuid)
+            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
             .WithColumn("feature_id").AsGuid().Nullable().ForeignKey("features", "id")
             .WithColumn("feature_request_id").AsGuid().Nullable().ForeignKey("feature_requests", "id")
             .WithColumn("voter_email").AsString(200).NotNullable()
@@ -94,7 +93,7 @@ public class InitialSchema : Migration
 
         // Feedback table
         Create.Table("feedback")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefaultValue(SystemMethods.NewGuid)
+            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
             .WithColumn("feature_id").AsGuid().Nullable().ForeignKey("features", "id")
             .WithColumn("feature_request_id").AsGuid().Nullable().ForeignKey("feature_requests", "id")
             .WithColumn("content").AsString(int.MaxValue).NotNullable()
@@ -110,7 +109,7 @@ public class InitialSchema : Migration
 
         // Domain goals table
         Create.Table("domain_goals")
-            .WithColumn("id").AsGuid().PrimaryKey().WithDefaultValue(SystemMethods.NewGuid)
+            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
             .WithColumn("domain_id").AsGuid().NotNullable().ForeignKey("domains", "id")
             .WithColumn("goal_description").AsString(int.MaxValue).NotNullable()
             .WithColumn("target_quarter").AsString(10).Nullable()

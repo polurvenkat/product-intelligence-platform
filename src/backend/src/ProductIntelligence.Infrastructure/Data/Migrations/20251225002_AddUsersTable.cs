@@ -8,7 +8,7 @@ public class AddUsersTable : Migration
     public override void Up()
     {
         Create.Table("users")
-            .WithColumn("id").AsGuid().PrimaryKey()
+            .WithColumn("id").AsGuid().PrimaryKey().WithDefault(new RawSql("gen_random_uuid()"))
             .WithColumn("email").AsString(255).NotNullable().Unique()
             .WithColumn("name").AsString(255).NotNullable()
             .WithColumn("company").AsString(255).Nullable()
