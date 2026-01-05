@@ -3,8 +3,9 @@
 -- Migration: 001_initial_schema
 
 -- Enable pgvector extension for vector similarity search
-CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Note: In managed environments like Azure Database for PostgreSQL, these must be created by an administrator.
+-- CREATE EXTENSION IF NOT EXISTS vector;
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Table: domains
 -- Hierarchical structure for product areas

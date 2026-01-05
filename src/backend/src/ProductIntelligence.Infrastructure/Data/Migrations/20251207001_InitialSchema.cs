@@ -8,8 +8,11 @@ public class InitialSchema : Migration
     public override void Up()
     {
         // Enable extensions (must be allow-listed in Azure via azure.extensions first)
-        Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"ltree\";");
-        Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"vector\";");
+        // Note: In managed environments like Azure Database for PostgreSQL, the application user 
+        // may not have permission to create extensions. These should be created by an administrator.
+        // Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"ltree\";");
+        // Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"vector\";");
+        // Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
 
         // Domains table (hierarchical)
         Create.Table("domains")

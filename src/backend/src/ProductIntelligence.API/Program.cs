@@ -5,8 +5,11 @@ using ProductIntelligence.Infrastructure.Data;
 using ProductIntelligence.Infrastructure.Repositories;
 using ProductIntelligence.Infrastructure.AI;
 using ProductIntelligence.Application.Interfaces.AI;
+using ProductIntelligence.Application.Interfaces.AzureDevOps;
+using ProductIntelligence.Infrastructure.Services.AzureDevOps;
 using ProductIntelligence.Core.Interfaces.Repositories;
 using ProductIntelligence.API.Middleware;
+using ProductIntelligence.Application.Interfaces;
 using ProductIntelligence.Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +18,9 @@ using Dapper;
 using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Enable legacy timestamp behavior for Npgsql
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Azure Key Vault Configuration
 var keyVaultUrl = builder.Configuration["KeyVault:Url"] ?? "https://farmerapp-configuration.vault.azure.net/";
@@ -47,6 +53,7 @@ builder.Services.Configure<AzureOpenAIOptions>(builder.Configuration.GetSection(
 builder.Services.Configure<AzureAISearchOptions>(builder.Configuration.GetSection("AzureAISearch"));
 builder.Services.Configure<AzureBlobStorageOptions>(builder.Configuration.GetSection("AzureBlobStorage"));
 builder.Services.Configure<RedisOptions>(builder.Configuration.GetSection("Redis"));
+builder.Services.Configure<AzureDevOpsOptions>(builder.Configuration.GetSection("AzureDevOps"));
 
 // Database
 var kvConnectionString = builder.Configuration.GetConnectionString("ProductIntelligencePlatformDb");
@@ -89,12 +96,16 @@ builder.Services.AddScoped<IFeatureRequestRepository, FeatureRequestRepository>(
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IFeatureVoteRepository, FeatureVoteRepository>();
 builder.Services.AddScoped<IDomainGoalRepository, DomainGoalRepository>();
+builder.Services.AddScoped<IRoadmapRepository, RoadmapRepository>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IWorkItemManager, WorkItemManager>();
+builder.Services.AddScoped<IRoadmapManager, RoadmapManager>();
 
 // Azure Services
 builder.Services.AddSingleton<IAzureOpenAIService, AzureOpenAIService>();
+builder.Services.AddHttpClient<IAzureDevOpsService, AzureDevOpsService>();
 
 // AI Agents
 builder.Services.AddScoped<IFeatureDeduplicationAgent, FeatureDeduplicationAgent>();
@@ -178,8 +189,10 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty; // Serve Swagger UI at root (http://localhost:5000)
     });
 }
-
-app.UseHttpsRedirection();
+else 
+{
+    app.UseHttpsRedirection();
+}
 
 // Routing must come before CORS, Auth, and custom middleware
 app.UseRouting();

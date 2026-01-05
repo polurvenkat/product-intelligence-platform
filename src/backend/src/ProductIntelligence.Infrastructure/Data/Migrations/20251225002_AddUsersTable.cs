@@ -7,6 +7,9 @@ public class AddUsersTable : Migration
 {
     public override void Up()
     {
+        // Ensure extensions are created (Note: In Azure, these must be created by an administrator)
+        // Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
+
         Create.Table("users")
             .WithColumn("id").AsGuid().PrimaryKey()
             .WithColumn("email").AsString(255).NotNullable().Unique()

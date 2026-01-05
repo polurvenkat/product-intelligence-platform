@@ -7,6 +7,11 @@ public class CreateStoredProcedures : Migration
 {
     public override void Up()
     {
+        // Ensure extensions are created (Note: In Azure, these must be created by an administrator)
+        // Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"ltree\";");
+        // Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"vector\";");
+        // Execute.Sql("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
+
         // Domain Functions
         Execute.Sql(@"
 CREATE OR REPLACE FUNCTION fn_domain_add(

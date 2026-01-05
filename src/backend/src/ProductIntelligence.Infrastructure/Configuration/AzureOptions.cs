@@ -29,3 +29,10 @@ public class RedisOptions
     public string ConnectionString { get; set; } = string.Empty;
     public int DefaultExpirationMinutes { get; set; } = 60;
 }
+
+public class AzureDevOpsOptions
+{
+    public string OrganizationUrl { get; set; } = string.Empty;
+    public string Project { get; set; } = string.Empty;
+    public string PersonalAccessToken { get; set; } = string.Empty;
+}
