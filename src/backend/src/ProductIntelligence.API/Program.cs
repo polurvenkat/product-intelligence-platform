@@ -65,6 +65,30 @@ builder.Services.Configure<AzureBlobStorageOptions>(builder.Configuration.GetSec
 builder.Services.Configure<RedisOptions>(builder.Configuration.GetSection("Redis"));
 builder.Services.Configure<AzureDevOpsOptions>(builder.Configuration.GetSection("AzureDevOps"));
 
+// Explicitly handle sensitive keys from Key Vault that might not bind correctly to sections
+var aiKey = builder.Configuration["AzureOpenAI:ApiKey"];
+var aiEndpoint = builder.Configuration["AzureOpenAI:Endpoint"];
+if (!string.IsNullOrEmpty(aiKey) || !string.IsNullOrEmpty(aiEndpoint))
+{
+    builder.Services.Configure<AzureOpenAIOptions>(options => 
+    {
+        if (!string.IsNullOrEmpty(aiKey)) options.ApiKey = aiKey;
+        if (!string.IsNullOrEmpty(aiEndpoint)) options.Endpoint = aiEndpoint;
+    });
+}
+
+var searchKey = builder.Configuration["AzureAISearch:ApiKey"];
+if (!string.IsNullOrEmpty(searchKey))
+{
+    builder.Services.Configure<AzureAISearchOptions>(options => options.ApiKey = searchKey);
+}
+
+var devOpsPat = builder.Configuration["AzureDevOps:PersonalAccessToken"];
+if (!string.IsNullOrEmpty(devOpsPat))
+{
+    builder.Services.Configure<AzureDevOpsOptions>(options => options.PersonalAccessToken = devOpsPat);
+}
+
 // Database
 var kvConnectionString = builder.Configuration.GetConnectionString("ProductIntelligencePlatformDb");
 var defaultConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -115,16 +139,6 @@ builder.Services.AddScoped<IFeatureVoteRepository, FeatureVoteRepository>();
 builder.Services.AddScoped<IDomainGoalRepository, DomainGoalRepository>();
 builder.Services.AddScoped<IRoadmapRepository, RoadmapRepository>();
 builder.Services.AddScoped<IIntelligenceRepository, IntelligenceRepository>();
-
-// Diagnostic Log for AI Config
-var aiEndpoint = builder.Configuration["AzureOpenAI:Endpoint"];
-var aiKey = builder.Configuration["AzureOpenAI:ApiKey"];
-Console.WriteLine($"[Config] AI Endpoint: {aiEndpoint}");
-Console.WriteLine($"[Config] AI Key Provided: {(!string.IsNullOrEmpty(aiKey))}");
-if (!string.IsNullOrEmpty(aiKey) && aiKey.Length > 4) 
-{
-    Console.WriteLine($"[Config] AI Key Starts With: {aiKey.Substring(0, 4)}... Ends With: {aiKey.Substring(aiKey.Length - 4)}");
-}
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
