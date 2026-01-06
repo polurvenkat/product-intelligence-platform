@@ -15,6 +15,7 @@ public class Feedback
     
     public string Content { get; private set; }
     public Sentiment Sentiment { get; private set; }
+    public decimal SentimentConfidence { get; private set; }
     
     public RequestSource Source { get; private set; }
     public string? CustomerId { get; private set; }
@@ -32,7 +33,8 @@ public class Feedback
         Guid? featureRequestId = null,
         string? customerId = null,
         CustomerTier? customerTier = null,
-        Sentiment sentiment = Sentiment.Neutral)
+        Sentiment sentiment = Sentiment.Neutral,
+        decimal sentimentConfidence = 0)
     {
         Id = Guid.NewGuid();
         Content = Guard.Against.NullOrWhiteSpace(content, nameof(content));
@@ -42,6 +44,7 @@ public class Feedback
         CustomerId = customerId;
         CustomerTier = customerTier;
         Sentiment = sentiment;
+        SentimentConfidence = sentimentConfidence;
         SubmittedAt = DateTime.UtcNow;
 
         if (featureId == null && featureRequestId == null)

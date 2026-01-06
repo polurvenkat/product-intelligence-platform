@@ -10,7 +10,7 @@ namespace ProductIntelligence.API.Controllers;
 /// <summary>
 /// Manages feature requests and their lifecycle.
 /// </summary>
-[Authorize]
+[AllowAnonymous]
 [ApiController]
 [Route("api/feature-requests")]
 public class FeatureRequestsController : ControllerBase

@@ -14,6 +14,11 @@ public interface IAzureOpenAIService
         string text,
         CancellationToken cancellationToken = default);
 
+    Task<string> GetAudioTranscriptionAsync(
+        Stream audioStream,
+        string fileName,
+        CancellationToken cancellationToken = default);
+
     IAsyncEnumerable<string> StreamChatAsync(
         IEnumerable<ChatMessage> messages,
         double? temperature = null,

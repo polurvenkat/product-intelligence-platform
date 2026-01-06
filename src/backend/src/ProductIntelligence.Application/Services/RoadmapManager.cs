@@ -104,11 +104,13 @@ namespace ProductIntelligence.Application.Services
             if (!int.TryParse(item.ExternalId, out var featureId)) return null;
 
             var details = await _workItemManager.GetFeatureWorkItemsAsync(featureId);
-            var total = details.UserStories.Count;
+            var allWorkItems = details.UserStories.Concat(details.Bugs).ToList();
+            var total = allWorkItems.Count;
             
             if (total == 0) return item.Progress;
 
-            var completed = details.UserStories.Count(s => s.Status == "Closed" || s.Status == "Done");
+            var doneStates = new[] { "Closed", "Done", "Completed", "Resolved", "Shipped" };
+            var completed = allWorkItems.Count(s => doneStates.Contains(s.Status, StringComparer.OrdinalIgnoreCase));
             var progress = (int)Math.Round((double)completed / total * 100);
 
             if (progress != item.Progress)

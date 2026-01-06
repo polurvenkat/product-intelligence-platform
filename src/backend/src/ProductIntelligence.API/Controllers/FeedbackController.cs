@@ -10,7 +10,7 @@ namespace ProductIntelligence.API.Controllers;
 /// <summary>
 /// Manages customer feedback on features and feature requests.
 /// </summary>
-[Authorize]
+[AllowAnonymous]
 [ApiController]
 [Route("api/[controller]")]
 public class FeedbackController : ControllerBase
@@ -47,6 +47,24 @@ public class FeedbackController : ControllerBase
             nameof(GetFeedback),
             new { id = feedbackId },
             feedbackId);
+    }
+
+    /// <summary>
+    /// Get all feedback.
+    /// </summary>
+    /// <param name="limit">Maximum number of feedback to return</param>
+    /// <param name="offset">Number of feedback to skip</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of feedback</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<FeedbackDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<FeedbackDto>>> GetAllFeedback(
+        [FromQuery] int limit = 100,
+        [FromQuery] int offset = 0,
+        CancellationToken cancellationToken = default)
+    {
+        var feedback = await _mediator.Send(new GetAllFeedbackQuery { Limit = limit, Offset = offset }, cancellationToken);
+        return Ok(feedback);
     }
 
     /// <summary>

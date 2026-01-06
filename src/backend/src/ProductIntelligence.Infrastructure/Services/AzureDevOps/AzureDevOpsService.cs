@@ -242,64 +242,64 @@ public class AzureDevOpsService : IAzureDevOpsService
         var updates = updatesDoc.RootElement.GetProperty("value");
 
         var laneDurations = new List<LaneDurationDto>();
-        string? currentLane = null;
+        string currentLane = fields.GetProperty("System.State").GetString() ?? "New";
         DateTime laneEnteredDate = workItem.CreatedDate;
-        DateTime lastUpdateRevisedDate = workItem.CreatedDate;
+        
+        // We'll use the history to find when we entered the CURRENT state.
+        // If there's no history for the state field, it means we've been in the current state since creation.
+        DateTime lastStateChangeDate = workItem.CreatedDate;
 
         foreach (var update in updates.EnumerateArray())
         {
-            if (update.TryGetProperty("fields", out var uFields) && uFields.TryGetProperty("System.State", out var sUpdate))
+            if (update.TryGetProperty("fields", out var uFields))
             {
-                var newState = sUpdate.GetProperty("newValue").GetString();
-                
-                if (currentLane != null && newState != currentLane)
+                if (uFields.TryGetProperty("System.State", out var sUpdate))
                 {
-                    // State changed. The previous state ended when this update occurred.
-                    // The time this update occurred is lastUpdateRevisedDate.
-                    laneDurations.Add(new LaneDurationDto
+                    var oldState = sUpdate.TryGetProperty("oldValue", out var oldV) ? oldV.GetString() : null;
+                    var newState = sUpdate.GetProperty("newValue").GetString();
+                    
+                    var updateDate = update.TryGetProperty("revisedDate", out var rd) && rd.ValueKind != JsonValueKind.Null 
+                        ? rd.GetDateTime() 
+                        : (update.TryGetProperty("System.ChangedDate", out var cd) ? cd.GetDateTime() : DateTime.UtcNow);
+
+                    if (oldState != null)
                     {
-                        LaneName = currentLane,
-                        EnteredDate = laneEnteredDate,
-                        LeftDate = lastUpdateRevisedDate,
-                        Duration = (lastUpdateRevisedDate - laneEnteredDate).TotalDays
-                    });
-                    laneEnteredDate = lastUpdateRevisedDate;
+                        laneDurations.Add(new LaneDurationDto
+                        {
+                            LaneName = oldState,
+                            EnteredDate = laneEnteredDate,
+                            LeftDate = updateDate,
+                            Duration = (updateDate - laneEnteredDate).TotalDays
+                        });
+                        laneEnteredDate = updateDate;
+                    }
                 }
-                currentLane = newState;
-            }
-            
-            // Update lastUpdateRevisedDate for the next iteration
-            if (update.TryGetProperty("revisedDate", out var rd) && rd.ValueKind != JsonValueKind.Null)
-            {
-                lastUpdateRevisedDate = rd.GetDateTime();
-            }
-            else
-            {
-                lastUpdateRevisedDate = DateTime.UtcNow;
             }
         }
 
-        // Add the final lane
-        if (currentLane != null)
+        // Add the current (final) state
+        laneDurations.Add(new LaneDurationDto
         {
-            laneDurations.Add(new LaneDurationDto
-            {
-                LaneName = currentLane,
-                EnteredDate = laneEnteredDate,
-                LeftDate = null,
-                Duration = (DateTime.UtcNow - laneEnteredDate).TotalDays
-            });
-        }
+            LaneName = currentLane,
+            EnteredDate = laneEnteredDate,
+            LeftDate = null,
+            Duration = (DateTime.UtcNow - laneEnteredDate).TotalDays
+        });
 
         workItem.LaneDurations = laneDurations;
 
         // Calculate TotalDaysInProgress (sum of durations for specific active states)
-        var activeStates = new[] { "In Progress", "Code Review", "QA", "UAT", "Ready for Review" };
+        var activeStates = new[] { "In Progress", "Code Review", "QA", "UAT", "Ready for Review", "Active", "Doing", "Developing" };
+        var completedStates = new[] { "Closed", "Done", "Completed", "Resolved", "Shipped" };
+
         workItem.TotalDaysInProgress = laneDurations
             .Where(l => activeStates.Contains(l.LaneName, StringComparer.OrdinalIgnoreCase))
             .Sum(l => l.Duration);
             
-        workItem.TotalDaysSoFar = workItem.TotalDaysInProgress;
+        workItem.TotalDaysSoFar = laneDurations
+            .Where(l => activeStates.Contains(l.LaneName, StringComparer.OrdinalIgnoreCase) || 
+                        completedStates.Contains(l.LaneName, StringComparer.OrdinalIgnoreCase))
+            .Sum(l => l.Duration);
 
         return workItem;
     }

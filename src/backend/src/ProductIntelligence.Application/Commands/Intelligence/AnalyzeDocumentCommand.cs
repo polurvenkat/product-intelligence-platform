@@ -6,6 +6,8 @@ namespace ProductIntelligence.Application.Commands.Intelligence;
 public record AnalyzeDocumentCommand : IRequest<DocumentAnalysisResultDto>
 {
     public IFormFile File { get; init; } = default!;
+    public Guid? UserId { get; set; }
+    public Guid? OrganizationId { get; set; }
 }
 
 public record DocumentAnalysisResultDto

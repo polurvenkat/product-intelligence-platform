@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using ProductIntelligence.Infrastructure.Configuration;
 using OpenAI.Chat;
 using OpenAI.Embeddings;
+using OpenAI.Audio;
 using ProductIntelligence.Application.Interfaces.AI;
 
 namespace ProductIntelligence.Infrastructure.AI;
@@ -67,8 +68,22 @@ public class AzureOpenAIService : IAzureOpenAIService
         string text,
         CancellationToken cancellationToken = default)
     {
-        var response = await _embeddingClient.GenerateEmbeddingAsync(text, cancellationToken: cancellationToken);
+        var options = new EmbeddingGenerationOptions
+        {
+            Dimensions = 1536
+        };
+        var response = await _embeddingClient.GenerateEmbeddingAsync(text, options, cancellationToken: cancellationToken);
         return response.Value.ToFloats().ToArray();
+    }
+
+    public async Task<string> GetAudioTranscriptionAsync(
+        Stream audioStream,
+        string fileName,
+        CancellationToken cancellationToken = default)
+    {
+        var audioClient = _client.GetAudioClient(_options.TranscriptionDeploymentName);
+        var response = await audioClient.TranscribeAudioAsync(audioStream, fileName, cancellationToken: cancellationToken);
+        return response.Value.Text;
     }
 
     public async IAsyncEnumerable<string> StreamChatAsync(

@@ -10,7 +10,7 @@ namespace ProductIntelligence.API.Controllers;
 /// <summary>
 /// Provides semantic search and filtering capabilities for features and requests.
 /// </summary>
-[Authorize]
+[AllowAnonymous]
 [ApiController]
 [Route("api/[controller]")]
 public class SearchController : ControllerBase

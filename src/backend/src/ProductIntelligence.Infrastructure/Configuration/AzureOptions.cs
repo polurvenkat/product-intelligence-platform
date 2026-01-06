@@ -7,6 +7,7 @@ public class AzureOpenAIOptions
     public string ManagedIdentityClientId { get; set; } = string.Empty;
     public string DeploymentName { get; set; } = "gpt-4o";
     public string EmbeddingDeploymentName { get; set; } = "text-embedding-3-large";
+    public string TranscriptionDeploymentName { get; set; } = "whisper";
     public int MaxTokens { get; set; } = 4096;
     public double Temperature { get; set; } = 0.7;
 }

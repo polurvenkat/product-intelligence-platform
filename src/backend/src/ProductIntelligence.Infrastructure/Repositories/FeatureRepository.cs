@@ -154,7 +154,9 @@ public class FeatureRepository : IFeatureRepository
     {
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         const string sql = @"
-            SELECT f.*, 
+            SELECT f.id, f.domain_id, f.title, f.description, f.status, f.priority,
+                   f.ai_priority_score, f.ai_priority_reasoning, f.estimated_effort_points,
+                   f.business_value_score, f.created_at, f.updated_at,
                    COUNT(fv.id) as vote_count,
                    COALESCE(SUM(fv.vote_weight), 0) as weighted_vote_count
             FROM features f

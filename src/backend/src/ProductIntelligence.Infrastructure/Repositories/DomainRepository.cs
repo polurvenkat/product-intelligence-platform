@@ -39,19 +39,19 @@ public class DomainRepository : IDomainRepository
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         const string sql = @"
             WITH RECURSIVE domain_tree AS (
-                SELECT id, parent_id, name, description, path, created_at, updated_at, 0 as level
+                SELECT id, organization_id, parent_domain_id, name, description, path, created_at, updated_at, 0 as level
                 FROM domains
-                WHERE parent_id IS NULL
+                WHERE parent_domain_id IS NULL AND organization_id = @OrganizationId
                 
                 UNION ALL
                 
-                SELECT d.id, d.parent_id, d.name, d.description, d.path, d.created_at, d.updated_at, dt.level + 1
+                SELECT d.id, d.organization_id, d.parent_domain_id, d.name, d.description, d.path, d.created_at, d.updated_at, dt.level + 1
                 FROM domains d
-                INNER JOIN domain_tree dt ON d.parent_id = dt.id
+                INNER JOIN domain_tree dt ON d.parent_domain_id = dt.id
             )
             SELECT * FROM domain_tree ORDER BY path";
         
-        return await connection.QueryAsync<Domain>(sql);
+        return await connection.QueryAsync<Domain>(sql, new { OrganizationId = organizationId });
     }
 
     public async Task<IEnumerable<Domain>> GetChildrenAsync(Guid parentId, CancellationToken cancellationToken = default)
@@ -114,26 +114,63 @@ public class DomainRepository : IDomainRepository
     {
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         
-        // Check for child domains
-        const string checkChildrenSql = "SELECT COUNT(*) FROM domains WHERE parent_domain_id = @Id";
-        var childCount = await connection.ExecuteScalarAsync<int>(checkChildrenSql, new { Id = id });
+        // Get the path of the domain we want to delete to find all descendants
+        const string getPathSql = "SELECT path FROM domains WHERE id = @Id";
+        var path = await connection.ExecuteScalarAsync<string>(getPathSql, new { Id = id });
         
-        if (childCount > 0)
+        if (string.IsNullOrEmpty(path)) return;
+
+        // Perform cascading delete in a transaction
+        using var transaction = connection.BeginTransaction();
+        try
         {
-            throw new InvalidOperationException($"Cannot delete domain with {childCount} child domain(s). Delete children first.");
+            // 1. Delete feedback for all features in the domain subtree
+            const string deleteFeedbackSql = @"
+                DELETE FROM feedback 
+                WHERE feature_id IN (
+                    SELECT f.id FROM features f
+                    JOIN domains d ON f.domain_id = d.id
+                    WHERE d.path <@ @Path::ltree
+                )";
+            await connection.ExecuteAsync(deleteFeedbackSql, new { Path = path }, transaction);
+
+            // 2. Delete feature votes for all features in the domain subtree
+            const string deleteVotesSql = @"
+                DELETE FROM feature_votes 
+                WHERE feature_id IN (
+                    SELECT f.id FROM features f
+                    JOIN domains d ON f.domain_id = d.id
+                    WHERE d.path <@ @Path::ltree
+                )";
+            await connection.ExecuteAsync(deleteVotesSql, new { Path = path }, transaction);
+
+            // 3. Delete domain goals in the subtree
+            const string deleteGoalsSql = @"
+                DELETE FROM domain_goals 
+                WHERE domain_id IN (
+                    SELECT id FROM domains WHERE path <@ @Path::ltree
+                )";
+            await connection.ExecuteAsync(deleteGoalsSql, new { Path = path }, transaction);
+
+            // 4. Delete features in the domain subtree
+            const string deleteFeaturesSql = @"
+                DELETE FROM features 
+                WHERE domain_id IN (
+                    SELECT id FROM domains WHERE path <@ @Path::ltree
+                )";
+            await connection.ExecuteAsync(deleteFeaturesSql, new { Path = path }, transaction);
+
+            // 5. Finally delete the domains themselves (this will include the parent and all child domains)
+            const string deleteDomainsSql = "DELETE FROM domains WHERE path <@ @Path::ltree";
+            await connection.ExecuteAsync(deleteDomainsSql, new { Path = path }, transaction);
+
+            transaction.Commit();
         }
-        
-        // Check for features
-        const string checkFeaturesSql = "SELECT COUNT(*) FROM features WHERE domain_id = @Id";
-        var featureCount = await connection.ExecuteScalarAsync<int>(checkFeaturesSql, new { Id = id });
-        
-        if (featureCount > 0)
+        catch (Exception)
         {
-            throw new InvalidOperationException($"Cannot delete domain with {featureCount} feature(s). Delete or reassign features first.");
+            transaction.Rollback();
+            throw;
         }
-        
-        const string sql = "DELETE FROM domains WHERE id = @Id";
-        await connection.ExecuteAsync(sql, new { Id = id });
     }
 
     public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)

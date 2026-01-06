@@ -1,0 +1,102 @@
+Using launch settings from /Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.API/Properties/launchSettings.json...
+Building...
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.API/ProductIntelligence.API.csproj : warning NU1603: ProductIntelligence.Infrastructure depends on Pgvector (>= 0.2.2) but Pgvector 0.2.2 was not found. Pgvector 0.3.0 was resolved instead.
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Infrastructure/ProductIntelligence.Infrastructure.csproj : warning NU1603: ProductIntelligence.Infrastructure depends on Pgvector (>= 0.2.2) but Pgvector 0.2.2 was not found. Pgvector 0.3.0 was resolved instead. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.API/ProductIntelligence.API.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.API/ProductIntelligence.API.csproj : warning NU1902: Package 'Microsoft.Identity.Web' 3.2.2 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-rpq8-q44m-2rpg
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.API/ProductIntelligence.API.csproj : warning NU1603: ProductIntelligence.Infrastructure depends on Pgvector (>= 0.2.2) but Pgvector 0.2.2 was not found. Pgvector 0.3.0 was resolved instead.
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.API/ProductIntelligence.API.csproj : warning NU1902: Package 'Microsoft.Identity.Web' 3.2.2 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-rpq8-q44m-2rpg
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Infrastructure/ProductIntelligence.Infrastructure.csproj : warning NU1603: ProductIntelligence.Infrastructure depends on Pgvector (>= 0.2.2) but Pgvector 0.2.2 was not found. Pgvector 0.3.0 was resolved instead.
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/DomainGoal.cs(20,13): warning CS8618: Non-nullable property 'GoalDescription' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/Feedback.cs(27,13): warning CS8618: Non-nullable property 'Content' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/FeatureVote.cs(28,13): warning CS8618: Non-nullable property 'VoterEmail' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/FeatureRequest.cs(42,13): warning CS8618: Non-nullable property 'Title' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/FeatureRequest.cs(42,13): warning CS8618: Non-nullable property 'Description' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/FeatureRequest.cs(42,13): warning CS8618: Non-nullable property 'RequesterName' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/Domain.cs(32,13): warning CS8618: Non-nullable property 'Name' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/Domain.cs(32,13): warning CS8618: Non-nullable property 'Path' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/Feature.cs(48,13): warning CS8618: Non-nullable property 'Title' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/Entities/Feature.cs(48,13): warning CS8618: Non-nullable property 'Description' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Core/ProductIntelligence.Core.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Application/Queries/Domains/GetDomainQueryHandler.cs(37,27): warning CS8601: Possible null reference assignment. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Application/ProductIntelligence.Application.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Application/Queries/Domains/GetDomainHierarchyQueryHandler.cs(35,27): warning CS8601: Possible null reference assignment. [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Application/ProductIntelligence.Application.csproj]
+/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Infrastructure/AI/AzureOpenAIService.cs(74,43): warning CS8425: Async-iterator 'AzureOpenAIService.StreamChatAsync(IEnumerable<ChatMessage>, double?, CancellationToken)' has one or more parameters of type 'CancellationToken' but none of them is decorated with the 'EnumeratorCancellation' attribute, so the cancellation token parameter from the generated 'IAsyncEnumerable<>.GetAsyncEnumerator' will be unconsumed [/Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.Infrastructure/ProductIntelligence.Infrastructure.csproj]
+[Config] Attempting to use Key Vault: https://farmerapp-configuration.vault.azure.net/
+[Config] Azure Key Vault configuration provider added.
+[Config] Using connection string from Key Vault (ProductIntelligencePlatformDb).
+[Config] Connection String: Host=localhost;Port=5432;Database=product_intelligence;Username=venkatpolur
+info: FluentMigrator.Runner.MigrationRunner[1000]
+      20260105001: AddSentimentConfidenceToFeedback migrating
+-------------------------------------------------------------------------------
+20260105001: AddSentimentConfidenceToFeedback migrating
+-------------------------------------------------------------------------------
+info: FluentMigrator.Runner.Processors.Postgres.PostgresProcessor[1004]
+      Beginning Transaction
+Beginning Transaction
+AlterTable feedback
+info: FluentMigrator.Runner.MigrationRunner[1004]
+      AlterTable feedback
+info: FluentMigrator.Runner.Processors.Postgres.PostgresProcessor[1003]
+info: FluentMigrator.Runner.MigrationRunner[1002]
+      => 0.000209s
+CreateColumn feedback sentiment_confidence Decimal
+info: FluentMigrator.Runner.MigrationRunner[1004]
+      CreateColumn feedback sentiment_confidence Decimal
+info: FluentMigrator.Runner.Processors.Postgres.PostgresProcessor[1003]
+      ALTER TABLE "public"."feedback" ADD "sentiment_confidence" decimal(5,4) NOT NULL DEFAULT 0;
+info: FluentMigrator.Runner.MigrationRunner[1002]
+      => 0.004469s
+info: FluentMigrator.Runner.Processors.Postgres.PostgresProcessor[1003]
+      INSERT INTO "public"."VersionInfo" ("Version","AppliedOn","Description") VALUES (20260105001,'2026-01-05T14:28:36','AddSentimentConfidenceToFeedback');
+Committing Transaction
+info: FluentMigrator.Runner.Processors.Postgres.PostgresProcessor[1004]
+      Committing Transaction
+20260105001: AddSentimentConfidenceToFeedback migrated
+info: FluentMigrator.Runner.MigrationRunner[1004]
+      20260105001: AddSentimentConfidenceToFeedback migrated
+info: FluentMigrator.Runner.MigrationRunner[1002]
+      => 0.00675s
+dbug: Microsoft.Extensions.Hosting.Internal.Host[1]
+      Hosting starting
+info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[62]
+      User profile is available. Using '/Users/venkatpolur/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+User profile is available. Using '/Users/venkatpolur/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+Now listening on: http://localhost:5005
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5005
+Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.API
+Content root path: /Users/venkatpolur/Documents/Personal/Projects/product-intelligence-platform/src/backend/src/ProductIntelligence.API
+dbug: Microsoft.Extensions.Hosting.Internal.Host[2]
+      Hosting started
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost:5005/api/Feedback - - -
+Request starting HTTP/1.1 GET http://localhost:5005/api/Feedback - - -
+Incoming GET request to /api/Feedback | TraceId: 0HNICCRAF8SJ7:00000001
+info: ProductIntelligence.API.Middleware.RequestLoggingMiddleware[0]
+      Incoming GET request to /api/Feedback | TraceId: 0HNICCRAF8SJ7:00000001
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'ProductIntelligence.API.Controllers.FeedbackController.GetAllFeedback (ProductIntelligence.API)'
+Executing endpoint 'ProductIntelligence.API.Controllers.FeedbackController.GetAllFeedback (ProductIntelligence.API)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetAllFeedback", controller = "Feedback"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[ProductIntelligence.Application.DTOs.FeedbackDto]]] GetAllFeedback(Int32, Int32, System.Threading.CancellationToken) on controller ProductIntelligence.API.Controllers.FeedbackController (ProductIntelligence.API).
+Route matched with {action = "GetAllFeedback", controller = "Feedback"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[ProductIntelligence.Application.DTOs.FeedbackDto]]] GetAllFeedback(Int32, Int32, System.Threading.CancellationToken) on controller ProductIntelligence.API.Controllers.FeedbackController (ProductIntelligence.API).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing OkObjectResult, writing value of type 'System.Linq.Enumerable+ListSelectIterator`2[[ProductIntelligence.Core.Entities.Feedback, ProductIntelligence.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[ProductIntelligence.Application.DTOs.FeedbackDto, ProductIntelligence.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+Executing OkObjectResult, writing value of type 'System.Linq.Enumerable+ListSelectIterator`2[[ProductIntelligence.Core.Entities.Feedback, ProductIntelligence.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[ProductIntelligence.Application.DTOs.FeedbackDto, ProductIntelligence.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action ProductIntelligence.API.Controllers.FeedbackController.GetAllFeedback (ProductIntelligence.API) in 48.309ms
+Executed action ProductIntelligence.API.Controllers.FeedbackController.GetAllFeedback (ProductIntelligence.API) in 48.309ms
+Executed endpoint 'ProductIntelligence.API.Controllers.FeedbackController.GetAllFeedback (ProductIntelligence.API)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'ProductIntelligence.API.Controllers.FeedbackController.GetAllFeedback (ProductIntelligence.API)'
+Completed GET request to /api/Feedback | Status: 200 | Duration: 58ms | TraceId: 0HNICCRAF8SJ7:00000001
+info: ProductIntelligence.API.Middleware.RequestLoggingMiddleware[0]
+      Completed GET request to /api/Feedback | Status: 200 | Duration: 58ms | TraceId: 0HNICCRAF8SJ7:00000001
+Request finished HTTP/1.1 GET http://localhost:5005/api/Feedback - 200 - application/json;+charset=utf-8 82.2739ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost:5005/api/Feedback - 200 - application/json;+charset=utf-8 82.2739ms

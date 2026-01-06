@@ -12,6 +12,7 @@ public record FeedbackDto
     public Guid? FeatureRequestId { get; init; }
     public string Content { get; init; } = string.Empty;
     public Sentiment Sentiment { get; init; }
+    public decimal SentimentConfidence { get; init; }
     public RequestSource Source { get; init; }
     public string? CustomerId { get; init; }
     public CustomerTier? CustomerTier { get; init; }

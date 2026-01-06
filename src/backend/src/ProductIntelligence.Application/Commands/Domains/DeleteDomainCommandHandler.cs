@@ -21,20 +21,7 @@ public class DeleteDomainCommandHandler : IRequestHandler<DeleteDomainCommand, b
             throw new KeyNotFoundException($"Domain with ID {request.Id} not found");
         }
 
-        // Check if domain has children
-        var hasChildren = await _domainRepository.HasChildrenAsync(request.Id, cancellationToken);
-        if (hasChildren)
-        {
-            throw new InvalidOperationException("Cannot delete domain with child domains. Delete children first.");
-        }
-
-        // Check if domain has features
-        var featureCount = await _domainRepository.GetFeatureCountAsync(request.Id, cancellationToken);
-        if (featureCount > 0)
-        {
-            throw new InvalidOperationException($"Cannot delete domain with {featureCount} features. Remove or reassign features first.");
-        }
-
+        // Cascading delete is handled in the repository
         await _domainRepository.DeleteAsync(request.Id, cancellationToken);
         return true;
     }

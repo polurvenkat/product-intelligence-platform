@@ -16,6 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Dapper;
 using Azure.Identity;
+using ProductIntelligence.Infrastructure.External;
+using ProductIntelligence.Application.Interfaces.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,14 @@ if (!string.IsNullOrEmpty(keyVaultUrl))
 
         builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUrl), new DefaultAzureCredential(credentialOptions));
         Console.WriteLine("[Config] Azure Key Vault configuration provider added.");
+
+        // If in development, re-add local settings to override Key Vault values if they exist locally
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
+                                .AddEnvironmentVariables();
+            Console.WriteLine("[Config] Development override: Re-applied appsettings.Development.json and Environment Variables.");
+        }
     }
     catch (Exception ex)
     {
@@ -59,8 +69,15 @@ builder.Services.Configure<AzureDevOpsOptions>(builder.Configuration.GetSection(
 var kvConnectionString = builder.Configuration.GetConnectionString("ProductIntelligencePlatformDb");
 var defaultConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-var connectionString = kvConnectionString ?? defaultConnectionString
-    ?? throw new InvalidOperationException("Connection string 'ProductIntelligencePlatformDb' or 'DefaultConnection' not found");
+// Prioritize local connection in development to use local PostgreSQL
+var connectionString = builder.Environment.IsDevelopment() 
+    ? (defaultConnectionString ?? kvConnectionString)
+    : (kvConnectionString ?? defaultConnectionString);
+
+if (connectionString == null)
+{
+    throw new InvalidOperationException("Connection string 'ProductIntelligencePlatformDb' or 'DefaultConnection' not found");
+}
 
 if (!string.IsNullOrEmpty(kvConnectionString))
 {
@@ -97,6 +114,17 @@ builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IFeatureVoteRepository, FeatureVoteRepository>();
 builder.Services.AddScoped<IDomainGoalRepository, DomainGoalRepository>();
 builder.Services.AddScoped<IRoadmapRepository, RoadmapRepository>();
+builder.Services.AddScoped<IIntelligenceRepository, IntelligenceRepository>();
+
+// Diagnostic Log for AI Config
+var aiEndpoint = builder.Configuration["AzureOpenAI:Endpoint"];
+var aiKey = builder.Configuration["AzureOpenAI:ApiKey"];
+Console.WriteLine($"[Config] AI Endpoint: {aiEndpoint}");
+Console.WriteLine($"[Config] AI Key Provided: {(!string.IsNullOrEmpty(aiKey))}");
+if (!string.IsNullOrEmpty(aiKey) && aiKey.Length > 4) 
+{
+    Console.WriteLine($"[Config] AI Key Starts With: {aiKey.Substring(0, 4)}... Ends With: {aiKey.Substring(aiKey.Length - 4)}");
+}
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -106,6 +134,7 @@ builder.Services.AddScoped<IRoadmapManager, RoadmapManager>();
 // Azure Services
 builder.Services.AddSingleton<IAzureOpenAIService, AzureOpenAIService>();
 builder.Services.AddHttpClient<IAzureDevOpsService, AzureDevOpsService>();
+builder.Services.AddScoped<IGitHubService, GitHubService>();
 
 // AI Agents
 builder.Services.AddScoped<IFeatureDeduplicationAgent, FeatureDeduplicationAgent>();
